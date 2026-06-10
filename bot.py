@@ -2,7 +2,11 @@ import requests
 import schedule
 import time
 from telegram import Bot
-from config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, OPENWEATHER_API_KEY, BALLDONTLIE_API_KEY
+import os
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
+OPENWEATHER_API_KEY = os.environ.get("OPENWEATHER_API_KEY")
+BALLDONTLIE_API_KEY = os.environ.get("BALLDONTLIE_API_KEY")
 
 # ── WEATHER ──────────────────────────────────────────────────
 def get_weather():

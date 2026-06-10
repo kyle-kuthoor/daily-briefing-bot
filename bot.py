@@ -40,7 +40,7 @@ def get_f1():
 # ── NBA ───────────────────────────────────────────────────────
 def get_nba():
     from datetime import datetime, timedelta
-    from config import BALLDONTLIE_API_KEY
+    
     
     # Get games from the last 7 days
     today = datetime.now().strftime("%Y-%m-%d")

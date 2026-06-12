@@ -113,7 +113,7 @@ async def main():
     await send_daily_briefing()
     while True:
         now = datetime.now()
-        if now.hour == 9 and now.minute == 0:
+        if now.hour == 3 and now.minute == 30:
             await send_daily_briefing()
             await asyncio.sleep(61)
         await asyncio.sleep(30)

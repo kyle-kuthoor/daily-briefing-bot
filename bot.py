@@ -7,12 +7,13 @@ from telegram import Bot
 # ── CONFIG ───────────────────────────────────────────────────
 # Load from environment variables (Railway) or config.py (local)
 try:
-    from config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, OPENWEATHER_API_KEY, BALLDONTLIE_API_KEY
+    from config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, OPENWEATHER_API_KEY, BALLDONTLIE_API_KEY, NEWS_API_KEY
 except ImportError:
     TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
     TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
     OPENWEATHER_API_KEY = os.environ.get("OPENWEATHER_API_KEY")
     BALLDONTLIE_API_KEY = os.environ.get("BALLDONTLIE_API_KEY")
+    NEWS_API_KEY = os.environ.get("NEWS_API_KEY")
 
 # ── WEATHER ──────────────────────────────────────────────────
 def get_weather():
@@ -103,6 +104,24 @@ def get_nba():
         msg += f"{visitor} {visitor_score} @ {home} {home_score} ({date})\n"
     return msg.strip()
 
+# ── TECH NEWS ─────────────────────────────────────────────────
+def get_tech_news():
+    url = (f"https://newsapi.org/v2/top-headlines?"
+           f"sources=techcrunch,the-verge,wired,ars-technica&"
+           f"pageSize=3&apiKey={NEWS_API_KEY}")
+    response = requests.get(url)
+    data = response.json()
+    articles = data['articles']
+
+    if not articles:
+        return "📱 <b>Tech News</b> — No headlines available"
+
+    msg = "📱 <b>Tech News</b>\n\n"
+    for article in articles:
+        title = article['title']
+        source = article['source']['name']
+        msg += f"• {title} <i>({source})</i>\n\n"
+    return msg.strip()
 # ── SEND BRIEFING ─────────────────────────────────────────────
 async def send_daily_briefing():
     bot = Bot(token=TELEGRAM_TOKEN)
@@ -129,6 +148,11 @@ async def send_daily_briefing():
         message += get_nba() + "\n\n"
     except Exception:
         message += "🏀 NBA unavailable\n\n"
+
+    try:
+        message += get_tech_news() + "\n\n"
+    except Exception:
+        message += "📱 Tech news unavailable\n\n"
 
     async with bot:
         await bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message, parse_mode='HTML')
